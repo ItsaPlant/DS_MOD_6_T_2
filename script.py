@@ -51,7 +51,28 @@ if __name__ == '__main__':
     ins = datapoints.insert()
     conn.execute(ins, datapoints_list)
 
-    data = conn.execute("SELECT * FROM stations LIMIT 5").fetchall()
+    crit_select = (
+        select(stations.c.eleveation).
+        where(stations.c.elevation >= 300).
+        exists()
+    )
+
+    conn.execute(crit_select)
+
+    crit_update = (
+        update(stations)
+        .where(stations.c.elevation >= 300)
+        .values(elevation = 299)
+    )
+
+    conn.execute(crit_update)
+
+    crit_delete = (
+        delete(stations)
+        .where(stations.c.elevation >= 300)
+    )
+
+    conn.execute(crit_delete)
 
     for dat in data:
         print(dat)
