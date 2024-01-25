@@ -53,5 +53,32 @@ if __name__ == '__main__':
 
     data = conn.execute("SELECT * FROM stations LIMIT 5").fetchall()
 
-    for dat in data:
+
+    #add new station
+    new_station_data = {
+        'station': 'NEW_STATION',
+        'latitude': 40.0,
+        'longitude': -75.0,
+        'elevation': 100.0,
+        'name': 'New Station Name',
+        'country': 'USA',
+        'state': 'CA'
+    }
+
+    ins = stations.insert().values(new_station_data)
+    conn.execute(ins)
+
+
+    #change name of the new station
+    updated_name = 'Updated Station Name'
+    conn.execute(update(stations).values(name=updated_name).where(stations.c.station == 'NEW_STATION'))
+
+    
+    #select all stations
+    updated_data = conn.execute(select([stations])).fetchall()
+    for dat in updated_data:
         print(dat)
+
+    
+    #delete the newly added station
+    conn.execute(delete(stations).where(stations.c.station == 'Updated Station Name'))
